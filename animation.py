@@ -13,10 +13,11 @@ from postgis.psycopg import register
 def animate(i):
     ax.set_title(datetime.datetime.utcfromtimestamp(ts_i+i*10))
     scat.set_offsets(offsets[i])
+    scat.set_facecolors(taxis_colors[i])
 
 scale=1/3000000
 conn = None
-conn = psycopg2.connect(database="lucparada", user="lucparada", password='', host="127.0.0.1", port="9876")
+conn = psycopg2.connect(database="gabriellima", user="gabriellima", password='', host="127.0.0.1", port="9876")
 
 ts_i = 1570665600
 ts_f = 1570667000
@@ -54,26 +55,56 @@ for row in results:
         ax.plot(xs,ys,color='black',lw='0.2')
         #
 offsets = []
-inf = {id: 0 for id in taxis}
+inf = []
+taxis_colors = []
 
 with open('offsets3.csv', 'r') as csvFile:
     reader = csv.reader(csvFile)
     i = 0
     for row in reader:
+        taxis_frame = ['green' for ids in range(len(row))]
+        ids = 0
+        l = []
         for j in row:
             x,y = j.split()
             x = float(x)
             y = float(y)
-            id = 0
-            l.append([x,y, id])
+            if (x != 0) or (y != 0):
+                if len(inf) <= 10:
+                    print("inf: ",str(inf))
+                    inf.append(ids)
+
+                if ids not in inf:
+                    for taxi_inf in inf:
+                        x2,y2 = row[taxi_inf].split()
+                        x2 = float(x2)
+                        y2 = float(y2)
+                        if np.sqrt(((x-x2)**2)+((y-y2)**2)) <= 100:
+                            inf.append(ids)
+            ids += 1
+            l.append([x, y])
+
+        for taxi_inf in inf:
+            taxis_frame[taxi_inf] = 'red'
+            #print("l: ", str(l))
+
         offsets.append(l)
+        taxis_colors.append(taxis_frame)
+        i += 1
+
 x,y = [],[]
 
 for i in offsets[0]:
+    print("i: ", i)
     x.append(i[0])
     y.append(i[1])
+    #id = i[2]
 
-    scat = ax.scatter(x,y,s=2,color='red)
+    #color = 'green'
+    #if id in inf:
+    #    color = 'red'
+
+    scat = ax.scatter(x,y,s=2)
     anim = FuncAnimation(
         fig, animate, interval=10, frames=len(offsets)-1, repeat = False)
     plt.draw()
