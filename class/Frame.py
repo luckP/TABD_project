@@ -30,6 +30,7 @@ class Frame():
     def plot(self):
         self.root.plot()
         plt.show()
+
     def scan_100(self, x, y):
         return self.root.scan_100(x, y)
 
