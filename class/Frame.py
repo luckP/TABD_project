@@ -10,10 +10,13 @@ class Frame():
             taxi = old_frame.getTaxis()
         # elif taxis != None:
         #     self.taxi = taxis
-        size = 10000
 
-        left_top = (-size, size)
-        right_bottom = (size, -size)
+
+        # left_top = (-150000, 300000)
+        # right_bottom = (150000, -300000)
+
+        left_top = (-10000, 10000)
+        right_bottom = (10000, -10000)
 
         self.root = Node(left_top,right_bottom, 0)
 
@@ -100,6 +103,9 @@ class Node():
             s += "\n    " + str(c)
         return str(self.left_top) + str(self.right_bottom) + str(len(self.taxis)) + s
 
+    def __add__(self):
+        pass
+
     def plot(self):
         for t in self.taxis:
             t.plot()
@@ -109,11 +115,23 @@ class Node():
         x1, x2, y1, y2 = self.get_vertices()
         plt.plot(np.array([x1, x2, x2, x1, x1]),np.array([y1, y1, y2, y2, y1]),c='k',ls='-',label='Rand', alpha=0.3)
 
+    def check_frontiers(self, x, y, dist_max):
+        x1, x2, y1, y2 = self.get_vertices()
+        x_half = x1+abs(x2 - x1)/2
+        y_half = y1-abs(y1 - y2)/2
+
+        ba1 = np.linalg.norm(np.array([x_half, y_half])-np.array([x_half, y2]))
+        bc2 = np.linalg.norm(np.array([x_half, y_half])-np.array([x, y]))
+        ba2 = np.linalg.norm(np.array([x_half, y_half])-np.array([x_half, y]))
+
+        dist = np.sqrt((x-x_half)**2+(y-y_half)**2)
+
+        return dist <= dist_max + (ba1*bc2/ba2)
+
     def scan_100(self, x, y):
-        # verificar funcao
         taxis = []
         # dist = 100
-        dist = 1000
+        dist_max = 1000
         x1, x2, y1, y2 = self.get_vertices()
 
         x_half = x1+abs(x2 - x1)/2
@@ -122,10 +140,11 @@ class Node():
         circle_distance_x = abs(x-x_half)
         circle_distance_y = abs(y-y_half)
 
-        if circle_distance_x <= abs(x1-x2)/2 or circle_distance_y <= abs(y1-y2)/2:
+        # if circle_distance_x <= abs(x1-x2)/2 or circle_distance_y <= abs(y1-y2)/2:
+        if self.check_frontiers(x, y, dist_max):
             for c in self.children:
                 taxis += c.scan_100(x, y)
             for t in self.taxis:
-                if np.sqrt( (t.coord[0]-x)**2 + (t.coord[1]-y)**2 )<dist:
+                if np.sqrt( (t.coord[0]-x)**2 + (t.coord[1]-y)**2 )<dist_max:
                     taxis.append(t)
         return taxis
