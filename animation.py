@@ -17,7 +17,7 @@ def animate(i):
 
 scale=1/3000000
 conn = None
-conn = psycopg2.connect(database="gabriellima", user="gabriellima", password='', host="127.0.0.1", port="9876")
+conn = psycopg2.connect(database="lucparada", user="lucparada", password='', host="127.0.0.1", port="9876")
 
 ts_i = 1570665600
 ts_f = 1570667000
