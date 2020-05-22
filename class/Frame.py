@@ -127,27 +127,3 @@ class Node():
                 if np.sqrt( (t.coord[0]-x)**2 + (t.coord[1]-y)**2 )<dist:
                     taxis.append(t)
         return taxis
-
-
-
-
-
-# teste
-size = 10000
-taxis = []
-for i in range(7):
-    taxis+=[Taxi(i, random.uniform(-size/(2**(i/200)), size/(2**(i/200))), random.uniform(-size/(2**(i/200)), size/(2**(i/200))), random.choices([0,1])[0], random.choices([1,2,3,4])[0]) for i in range(300)]
-# for t in taxis:
-#     print(t)
-
-f = Frame(taxis=taxis)
-id = len(taxis) - 200
-tt = f.scan_100(taxis[id].coord[0], taxis[id].coord[1])
-for t in tt:
-    t.plot(color='red', markersize=4)
-taxis[id].plot(color='blue', markersize=4)
-
-print(len(tt))
-
-f.plot()
-# print(f)
