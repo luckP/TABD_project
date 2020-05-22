@@ -10,6 +10,7 @@ class Frame():
             taxi = old_frame.getTaxis()
         # elif taxis != None:
         #     self.taxi = taxis
+        size = 10000
 
         left_top = (-size, size)
         right_bottom = (size, -size)
